@@ -1,7 +1,7 @@
 #Dependencies 
 from splinter import Browser
 from bs4 import BeautifulSoup
-
+ 
 def init_browser():
     executable_path = {'executable_path': 'chromedriver.exe'} 
     return Browser('chrome', **executable_path, headless=True)
@@ -29,35 +29,21 @@ def scrape_info():
     # print(news_p)
 
     # URL of JPL page to be scraped
-    url_jpl = 'https://www.jpl.nasa.gov'
+    url_jpl = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
     browser.visit(url_jpl)
-   
-    html_jpl = browser.html
-    soup_jpl = BeautifulSoup(html_jpl, 'html.parser')
+    main_html = browser.find_by_xpath('//*[@id="full_image"]').html
+    img = browser.html
+    #print("\nimg:\n",img)
 
-    #Print the JPL featured image page URL (partial)
-    picture = soup_jpl.find('a', class_='image_day')
-    # print(picture['href'])
+    soup_jpl = BeautifulSoup(img, 'html.parser')
+    print("\nsoup_jpl:\n",soup_jpl)
 
-    #Print the full JPL url to the image page
-    featured_image_url_page = url_jpl + (picture['href'])
-    # print(featured_image_url_page)
- 
-    browser.visit(featured_image_url_page)
+    featured_image = soup_jpl.find('a',{'id':'full_image'})
+    print("\nfeatured_image:\n",featured_image)
 
-    html_jpl2 = browser.html
-    soup_jpl = BeautifulSoup(html_jpl2, 'html.parser')
-
-    pic2 = soup_jpl.find(class_='download_tiff')
-    # print(pic2)
-
-    pic3 = pic2.find('a')
-    # print(pic3['href'])
-
-    #Print the JPL full size IMAGE DOWNLOAD url
-    featured_image_url = 'http:' + pic3['href']
+    featured_image_url = 'https://www.jpl.nasa.gov' + featured_image['data-fancybox-href']
     print(featured_image_url)
-
+   
     #URL of the Twitter page to be scraped
     url_weather = 'https://twitter.com/marswxreport'
     browser.visit(url_weather)
@@ -67,7 +53,7 @@ def scrape_info():
 
     #Print the latest Mars weather tweet
     mars_weather = soup_weather.find(class_='js-tweet-text-container').text
-    # print(mars_weather)
+    print(mars_weather)
 
     #Dependency for Pandas
     import pandas as pd
@@ -81,10 +67,18 @@ def scrape_info():
 
     facts_df = tables
     facts_df.columns = ['Parameter', 'Mars Fact']
+    # facts_df.columns = [[0], 'Mars Fact'[1]]
     # facts_df
 
     facts_df.set_index('Parameter', inplace=True)
+    # facts_df.set_index([0], inplace=True)
     # facts_df
+
+    # d = dict(selector="th",
+    # props=[('text-align', 'center')])
+
+    # facts_df.style.set_properties(**{'width':'15em', 'text-align':'center'})\
+    #     .set_table_styles([d])
 
     facts_df = facts_df.to_html()
 
@@ -125,7 +119,7 @@ def scrape_info():
 
     sch_url2 = sch_url1.find('li')
     # print(cer_url2)
-
+ 
     #Print image url
     schiaparelli_picture = sch_url2.find('a')
     # print(schiaparelli_picture['href'])
@@ -175,8 +169,7 @@ def scrape_info():
     #Store the data in a dictionary
     mars_data = {
         'news_title':news_title,
-        'news_p':news_p,
-        'featured_image_url_page':featured_image_url_page,
+        'news_p':news_p,        
         'featured_image_url':featured_image_url,
         'mars_weather':mars_weather,
         'facts_df': facts_df,
