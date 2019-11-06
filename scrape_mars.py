@@ -67,18 +67,8 @@ def scrape_info():
 
     facts_df = tables
     facts_df.columns = ['Parameter', 'Mars Fact']
-    # facts_df.columns = [[0], 'Mars Fact'[1]]
-    # facts_df
 
     facts_df.set_index('Parameter', inplace=True)
-    # facts_df.set_index([0], inplace=True)
-    # facts_df
-
-    # d = dict(selector="th",
-    # props=[('text-align', 'center')])
-
-    # facts_df.style.set_properties(**{'width':'15em', 'text-align':'center'})\
-    #     .set_table_styles([d])
 
     facts_df = facts_df.to_html()
 

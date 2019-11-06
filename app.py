@@ -9,13 +9,6 @@ app = Flask(__name__)
 # Use flask_pymongo to set up mongo connection
 app.config["MONGO_URI"] = "mongodb://localhost:27017/mars_app"
 mongo = PyMongo(app)
- 
-# Create connection variable 
-# conn = 'mongodb://localhost:27017'
-
-# Pass connection to the pymongo instance.
-# client = PyMongo.MongoClient(conn)
-    #The above line gives an error, 'pymongo is not defined' 
 
 # Connect to a database. Will create one if not already available.
 db = mongo.db.mars_db
